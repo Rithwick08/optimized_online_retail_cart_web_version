@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <h2>Welcome, Admin!</h2>
+
+  <button onclick="location.href='add-product.html'">Add Product</button>
+  <button onclick="location.href='delete-product.html'">Delete Product</button>
+  <button onclick="location.href='delete-customer.html'">Delete Customer</button>
+  <button onclick="logout()">Logout</button>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (!token || role !== "admin") {
+      alert("Unauthorized. Redirecting to login.");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      window.location.href = "login.html";
+    });
+    function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    alert("You have been logged out.");
+    window.location.href = "login.html";
+  }
+  </script>
+</body>
+</html>

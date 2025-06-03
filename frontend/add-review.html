@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Product Review</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      padding: 2rem;
+    }
+    h2 {
+      margin-bottom: 1rem;
+    }
+    label, select, textarea, input {
+      display: block;
+      margin-bottom: 1rem;
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h2>Add Product Review</h2>
+
+  <label for="productSelect">Select Product:</label>
+  <select id="productSelect">
+    <option value="">-- Select a Product --</option>
+  </select>
+
+  <label for="username">Your Name:</label>
+  <input type="text" id="username" required>
+
+  <label for="comment">Your Review:</label>
+  <textarea id="comment" rows="4" required></textarea>
+
+  <button onclick="submitReview()">Submit Review</button>
+
+  <script>
+    async function loadProducts() {
+      try {
+        const res = await fetch('http://localhost:3000/api/products');
+        const products = await res.json();
+        const select = document.getElementById('productSelect');
+        products.forEach(product => {
+          const option = document.createElement('option');
+          option.value = product._id;
+          option.textContent = product.name;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        alert('Failed to load products');
+      }
+    }
+
+    async function submitReview() {
+      const productId = document.getElementById('productSelect').value;
+      const username = document.getElementById('username').value;
+      const comment = document.getElementById('comment').value;
+
+      if (!productId || !username || !comment) {
+        return alert('Please fill out all fields');
+      }
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/reviews/${productId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, comment })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert('Review submitted successfully!');
+          document.getElementById('username').value = '';
+          document.getElementById('comment').value = '';
+        } else {
+          alert(data.message || 'Failed to submit review');
+        }
+      } catch (err) {
+        alert('Something went wrong while submitting the review');
+      }
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>

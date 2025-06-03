@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Product</title>
+</head>
+<body>
+  <h1>Delete Product</h1>
+  <form id="deleteProductForm">
+    <label>Product ID: <input type="text" name="productId" required></label><br><br>
+    <button type="submit">Delete Product</button>
+  </form>
+
+  <script>
+    document.getElementById('deleteProductForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const productId = this.productId.value.trim();
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/products/${productId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        const data = await response.json();
+        alert(data.message || 'Product deleted successfully');
+      } catch (err) {
+        alert('Error deleting product');
+      }
+    });
+  </script>
+</body>
+</html>

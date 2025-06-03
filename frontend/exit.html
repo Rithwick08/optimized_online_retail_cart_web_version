@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Logout</title>
+  <script>
+    // Clear session/token and redirect to login
+    window.onload = function () {
+      // Example: clear token from localStorage
+      localStorage.removeItem('token');
+      alert('You have been logged out.');
+      window.location.href = 'login.html';
+    };
+  </script>
+</head>
+<body>
+</body>
+</html>

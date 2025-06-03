@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Product Reviews</title>
+</head>
+<body>
+  <h2>View Product Reviews</h2>
+
+  <form id="reviewForm">
+    <label for="productId">Product ID:</label>
+    <input type="text" id="productId" required />
+    <button type="submit">Get Reviews</button>
+  </form>
+
+  <ul id="reviewsList"></ul>
+  <button onclick="window.history.back()">Go Back</button>
+
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Unauthorized. Redirecting to login.");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("reviewForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const productId = document.getElementById("productId").value;
+      const response = await fetch(`/api/reviews/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      const reviewsList = document.getElementById("reviewsList");
+      reviewsList.innerHTML = "";
+
+      if (Array.isArray(data) && data.length > 0) {
+        data.forEach((review) => {
+          const li = document.createElement("li");
+          li.textContent = `${review.username}: ${review.review}`;
+          reviewsList.appendChild(li);
+        });
+      } else {
+        reviewsList.innerHTML = "<li>No reviews found for this product.</li>";
+      }
+    });
+  </script>
+</body>
+</html>

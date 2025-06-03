@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Customer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f8f9fa;
+    }
+    form {
+      background-color: white;
+      padding: 1.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      max-width: 400px;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>Add Customer</h2>
+  <form id="addCustomerForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" required />
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" required />
+
+    <label for="role">Role:</label>
+    <select id="role" required>
+      <option value="customer">Customer</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <button type="submit">Add Customer</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('addCustomerForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const user = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+        role: document.getElementById('role').value
+      };
+
+      try {
+        const response = await fetch('http://localhost:3000/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(user)
+        });
+
+        const result = await response.json();
+        alert(result.message || 'Customer added!');
+        form.reset();
+      } catch (err) {
+        alert('Error adding customer');
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>

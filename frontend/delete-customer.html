@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Customer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #fafafa;
+    }
+    form {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 6px;
+      max-width: 400px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>Delete Customer</h2>
+  <form id="deleteCustomerForm">
+    <label for="customerId">Customer ID:</label>
+    <input type="text" id="customerId" placeholder="Enter Customer ID" required />
+    <button type="submit">Delete Customer</button>
+  </form>
+
+  <script>
+    document.getElementById('deleteCustomerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('customerId').value.trim();
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/customers/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await res.json();
+        alert(data.message || 'Customer deleted');
+        e.target.reset();
+      } catch (err) {
+        console.error(err);
+        alert('Error deleting customer');
+      }
+    });
+  </script>
+</body>
+</html>

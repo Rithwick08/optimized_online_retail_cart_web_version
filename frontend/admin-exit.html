@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Logout</title>
+  <script>
+    window.onload = () => {
+      localStorage.removeItem('token');
+      alert('Logged out successfully');
+      window.location.href = 'login.html';
+    };
+  </script>
+</head>
+<body></body>
+</html>

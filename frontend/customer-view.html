@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customer Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .dashboard-container {
+      max-width: 500px;
+      margin: auto;
+      margin-top: 80px;
+    }
+
+    .btn-square {
+      height: 60px;
+      font-size: 1.1rem;
+      transition: transform 0.2s;
+    }
+
+    .btn-square:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+  <div class="dashboard-container card shadow p-4">
+    <h2 class="text-center mb-4 text-primary">Welcome, Customer!</h2>
+
+    <div class="d-grid gap-3">
+      <button class="btn btn-outline-primary btn-square" onclick="location.href='view-products.html'">View Products</button>
+      <button class="btn btn-outline-success btn-square" onclick="location.href='create-order.html'">Create Order</button>
+      <button class="btn btn-outline-info btn-square" onclick="location.href='view-orders.html'">View Order Details</button>
+      <button class="btn btn-outline-warning btn-square" onclick="location.href='view-reviews.html'">View Product Reviews</button>
+      <button class="btn btn-outline-secondary btn-square" onclick="location.href='add-review.html'">Add Review</button>
+      <button class="btn btn-danger btn-square" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (!token || role !== "customer") {
+      alert("Unauthorized. Redirecting to login.");
+      window.location.href = "login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      alert("You have been logged out.");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Bootstrap for clean UI -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f9f9f9;
+      padding: 40px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Order Details</h2>
+    <div id="ordersList"></div>
+    <button class="btn btn-secondary mt-3 w-100" onclick="window.history.back()">Go Back</button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const userId = localStorage.getItem("userId");
+
+      if (!userId) {
+        alert("Unauthorized. Redirecting to login.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      fetch(`http://localhost:3000/api/orders/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          const ordersList = document.getElementById("ordersList");
+          if (!data || data.length === 0) {
+            ordersList.innerHTML = "<p>No orders found.</p>";
+            return;
+          }
+
+          data.forEach(order => {
+            const div = document.createElement("div");
+            div.className = "card mb-3";
+            div.innerHTML = `
+              <div class="card-body">
+                <h5 class="card-title">Order ID: ${order._id}</h5>
+                <p class="card-text">Total: ₹${order.totalAmount}</p>
+                <ul>
+                  ${order.products.map(p => `
+                    <li>${p.productId.name} x ${p.quantity}</li>
+                  `).join('')}
+                </ul>
+              </div>
+            `;
+            ordersList.appendChild(div);
+          });
+        })
+        .catch(() => {
+          alert("Failed to fetch orders.");
+        });
+    });
+  </script>
+</body>
+</html>
