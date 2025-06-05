@@ -53,35 +53,37 @@
       </div>
 
       <!-- Card Inputs -->
-      <div id="cardDetails" class="mb-3">
-        <label class="form-label">Card Number</label>
-        <input type="text" class="form-control mb-2" placeholder="1234 5678 9012 3456" required />
-        <div class="row">
-          <div class="col">
-            <input type="text" class="form-control" placeholder="MM/YY" required />
-          </div>
-          <div class="col">
-            <input type="text" class="form-control" placeholder="CVV" required />
-          </div>
-        </div>
-      </div>
+      <!-- Card Inputs -->
+<div id="cardDetails" class="mb-3">
+  <label class="form-label">Card Number</label>
+  <input id="cardNumber" type="text" class="form-control mb-2" placeholder="1234 5678 9012 3456" />
+  <div class="row">
+    <div class="col">
+      <input id="expiry" type="text" class="form-control" placeholder="MM/YY" />
+    </div>
+    <div class="col">
+      <input id="cvv" type="text" class="form-control" placeholder="CVV" />
+    </div>
+  </div>
+</div>
 
-      <!-- UPI Input -->
-      <div id="upiDetails" class="mb-3" style="display: none;">
-        <label class="form-label">UPI ID</label>
-        <input type="text" class="form-control" placeholder="example@upi" />
-      </div>
+<!-- UPI Input -->
+<div id="upiDetails" class="mb-3" style="display: none;">
+  <label class="form-label">UPI ID</label>
+  <input id="upiId" type="text" class="form-control" placeholder="example@upi" />
+</div>
 
-      <!-- Net Banking Input -->
-      <div id="netBankingDetails" class="mb-3" style="display: none;">
-        <label class="form-label">Select Bank</label>
-        <select class="form-select">
-          <option>HDFC</option>
-          <option>ICICI</option>
-          <option>SBI</option>
-          <option>Axis Bank</option>
-        </select>
-      </div>
+<!-- Net Banking Input -->
+<div id="netBankingDetails" class="mb-3" style="display: none;">
+  <label class="form-label">Select Bank</label>
+  <select id="bankSelect" class="form-select">
+    <option value="">-- Choose Bank --</option>
+    <option>HDFC</option>
+    <option>ICICI</option>
+    <option>SBI</option>
+    <option>Axis Bank</option>
+  </select>
+</div>
 
       <button type="submit" class="btn btn-primary w-100">Proceed</button>
     </form>
@@ -94,43 +96,77 @@
   <script>
     const amount = localStorage.getItem("orderAmount");
     const orderId = localStorage.getItem("orderId");
-
+  
     if (!amount || !orderId) {
       alert("Missing order details. Redirecting...");
       window.location.href = "create_order.html";
     }
-
+  
     document.getElementById("amountDisplay").textContent = amount;
-
+  
     const form = document.getElementById("paymentForm");
     const successMsg = document.getElementById("successMessage");
-
-    const methodRadios = document.getElementsByName("method");
+  
     const cardDetails = document.getElementById("cardDetails");
     const upiDetails = document.getElementById("upiDetails");
     const netBankingDetails = document.getElementById("netBankingDetails");
-
-    // Toggle payment fields
-    methodRadios.forEach(radio => {
-      radio.addEventListener("change", () => {
-        cardDetails.style.display = radio.value === "Card" ? "block" : "none";
-        upiDetails.style.display = radio.value === "UPI" ? "block" : "none";
-        netBankingDetails.style.display = radio.value === "Net Banking" ? "block" : "none";
-      });
+  
+    function toggleFields() {
+      const method = document.querySelector('input[name="method"]:checked').value;
+  
+      cardDetails.style.display = method === "Card" ? "block" : "none";
+      upiDetails.style.display = method === "UPI" ? "block" : "none";
+      netBankingDetails.style.display = method === "Net Banking" ? "block" : "none";
+    }
+  
+    document.querySelectorAll('input[name="method"]').forEach(radio => {
+      radio.addEventListener("change", toggleFields);
     });
-
-    form.addEventListener("submit", e => {
+  
+    toggleFields(); // initialize on load
+  
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
-
+  
+      const method = document.querySelector('input[name="method"]:checked').value;
+  
+      if (method === "Card") {
+        const cardNumber = document.getElementById("cardNumber").value.trim();
+        const expiry = document.getElementById("expiry").value.trim();
+        const cvv = document.getElementById("cvv").value.trim();
+  
+        if (!cardNumber || !expiry || !cvv) {
+          return alert("Please enter all card details.");
+        }
+      } else if (method === "UPI") {
+        const upiId = document.getElementById("upiId").value.trim();
+        if (!upiId) return alert("Please enter a valid UPI ID.");
+      } else if (method === "Net Banking") {
+        const bank = document.getElementById("bankSelect").value;
+        if (!bank) return alert("Please select a bank.");
+      }
+  
+      // ✅ Show loading animation
+      successMsg.innerHTML = `
+        <div class="spinner-border text-success" role="status"></div>
+        <p class="mt-3">Processing payment...</p>
+      `;
       successMsg.style.display = "block";
-
-      // Clear data
-      localStorage.removeItem("orderId");
-      localStorage.removeItem("orderAmount");
-
-      // Simulate redirect
+  
+      // Simulate delay → then success animation
       setTimeout(() => {
-        window.location.href = "customer-view.html";
+        successMsg.innerHTML = `
+          <h4 class="text-success">✅ Payment Successful!</h4>
+          <p>Redirecting to homepage...</p>
+        `;
+  
+        // Clear local storage
+        localStorage.removeItem("orderId");
+        localStorage.removeItem("orderAmount");
+  
+        setTimeout(() => {
+          window.location.href = "customer-view.html";
+        }, 2000);
       }, 2000);
     });
   </script>

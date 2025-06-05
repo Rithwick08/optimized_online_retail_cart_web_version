@@ -11,6 +11,7 @@ const app = express();
 const PORT = 3000;
 const path = require('path');
 const paymentRoutes = require('./routes/payments');
+const customerRoutes = require('./routes/customers'); // Adjust path if needed
 
 // Middleware
 const allowedOrigins = ["http://localhost:5500", "http://127.0.0.1:5501"];
@@ -33,7 +34,7 @@ app.use('/api/products', productRoutes); // For products-related operations
 app.use('/api/orders', orderRoutes);
 app.use("/api/reviews", require("./routes/reviews"));
 app.use("/api/payments", paymentRoutes);
-
+app.use('/api/customers', customerRoutes);
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/optimized_cart_db', {
   useNewUrlParser: true,

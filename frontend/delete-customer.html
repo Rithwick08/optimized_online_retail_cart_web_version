@@ -3,54 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <title>Delete Customer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background: #fafafa;
-    }
-    form {
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 6px;
-      max-width: 400px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-    input, button {
-      width: 100%;
-      padding: 0.75rem;
-      margin-top: 1rem;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-  <h2>Delete Customer</h2>
-  <form id="deleteCustomerForm">
-    <label for="customerId">Customer ID:</label>
-    <input type="text" id="customerId" placeholder="Enter Customer ID" required />
-    <button type="submit">Delete Customer</button>
-  </form>
+<body class="bg-light">
+
+  <div class="container mt-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 500px;">
+      <div class="card-body">
+        <h3 class="card-title mb-4 text-center">Delete Customer</h3>
+        
+        <form id="deleteCustomerForm">
+          <div class="mb-3">
+            <label for="customerSelect" class="form-label">Select Customer</label>
+            <select id="customerSelect" class="form-select" required>
+              <option value="">-- Select Customer --</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-danger w-100">Delete Customer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    async function loadCustomers() {
+      try {
+        const res = await fetch('http://localhost:3000/api/customers');
+        const customers = await res.json();
+
+        const select = document.getElementById('customerSelect');
+        customers.forEach(customer => {
+          const option = document.createElement('option');
+          option.value = customer._id;
+          option.textContent = `${customer.username} (${customer._id})`;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        alert('Failed to load customers.');
+      }
+    }
+
     document.getElementById('deleteCustomerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const id = document.getElementById('customerId').value.trim();
+      const customerId = document.getElementById('customerSelect').value;
+      if (!customerId) return alert('Please select a customer.');
 
       try {
-        const res = await fetch(`http://localhost:3000/api/customers/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+        const res = await fetch(`http://localhost:3000/api/customers/${customerId}`, {
+          method: 'DELETE'
         });
         const data = await res.json();
-        alert(data.message || 'Customer deleted');
-        e.target.reset();
+        alert(data.message || 'Customer deleted successfully');
+        location.reload(); // Refresh dropdown
       } catch (err) {
-        console.error(err);
         alert('Error deleting customer');
       }
     });
+
+    loadCustomers();
   </script>
+
 </body>
 </html>
